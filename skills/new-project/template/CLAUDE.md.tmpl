@@ -21,7 +21,7 @@
 | `research/` | Finished research, one Markdown report per question. Read `research/README.md` first, not the reports. |
 | `code/backend/` | Backend code. Its own `CLAUDE.md` has the stack, commands and conventions. |
 | `code/frontend/` | Frontend code. Its own `CLAUDE.md` has the stack, commands and conventions. |
-| `docs/` | Living documentation: charter, architecture, API, concepts, decisions, learnings, tracker. `docs/README.md` lists every doc with its status. |
+| `docs/` | Living documentation: charter, architecture, API, testing, concepts, decisions, learnings, tracker. `docs/README.md` lists every doc with its status. |
 | `session/` | Working state between sessions: `HANDOFF.md`, and `plans/` with one plan per feature (finished ones in `plans/done/`). |
 
 ## Lifecycle
@@ -43,6 +43,7 @@
 - **Run `/handoff`** at the end of each task and before the context fills up.
 - **IDs come from the script**, never from counting by hand: `bash <kit>/new-project/scripts/next-id.sh D|T|L`.
 - **Commit messages start with the task ID:** `T-012: Add the login form`. Mention decision IDs in the body when a commit implements one.
+- **Commits are mine.** Commit messages and pull requests contain no co-author, session or tool attribution lines.
 
 ## Documentation formats
 
@@ -57,20 +58,33 @@
 {{learning}}- Prefer the simplest approach that teaches the idea, and name the production-grade alternative in one line.
 {{learning}}- When I could reasonably attempt something myself, give me a hint first and the full solution only if I ask.
 {{learning}}- At the end of each plan, ask me to explain the key idea back, or to predict what a change will do, before confirming it's done. Correct misunderstandings directly.
+{{learning}}- For each test, say in one line what it proves and why it belongs in that layer. Once per plan, offer me the chance to write a test myself before you write the code.
 {{learning}}- Every bug, dead end and surprise goes in `docs/learnings.md`, with the general rule it teaches.
 {{production}}## Working style: production
 {{production}}
 {{production}}- Production-grade choices by default: maintained, widely used dependencies, pinned versions. Keep explanations short.
-{{production}}- Every change in behaviour comes with tests, and the tests run before anything is called done.
+{{production}}- Every change in behaviour comes with tests at the right layers, and the full suite runs in CI on every push; a red build blocks merging.
 {{production}}- Run `/security-review` before merging anything that touches authentication, input handling, secrets or data access.
 {{production}}- Keep `docs/runbook.md` current: settings, deploy, rollback, troubleshooting.
 {{production}}- Record notable bugs and incidents in `docs/learnings.md`.
+
+## Testing
+
+The strategy, tools, commands and coverage map live in `docs/testing.md`. In short:
+
+- **Four layers:** unit (one piece of logic, dependencies faked), integration (parts together for real), contract (both sides match `docs/api.md`), end-to-end (a few critical journeys through the UI).
+- **Test behaviour and requirements, not implementation details.** Every goal, endpoint and flow is proven by at least one test in the coverage map.
+- **Tests come from the plan:** each plan lists the tests per layer, written before or with the code.
+- **Every bug fix starts with a failing test** that reproduces it (a regression test).
+- **The full suite runs before a task is done,** so a change that breaks older behaviour is caught before it's committed.
+- Tests are independent: any order, their own data, no shared state, no real network or clock.
 
 ## Definition of done
 
 A task is done only when all of these are true (`/done` checks them):
 
-- It works and the tests pass.
+- It works, the new behaviour has tests, and the **full** test suite passes (not only the new tests).
+- Bug fixes have a regression test; `docs/testing.md`'s coverage map is updated.
 - `docs/tracker.md` is updated.
 - Docs are updated if behaviour, architecture, a flow or the API changed.
 - Decisions are logged in `docs/decisions.md`, lessons in `docs/learnings.md`.

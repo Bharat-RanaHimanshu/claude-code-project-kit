@@ -2,6 +2,18 @@
 
 All notable changes to this kit. The version lives in `skills/new-project/VERSION` and is stamped into every project's `CLAUDE.md`.
 
+## 2.1.0 (2026-10-18)
+
+A testing strategy in every project, so a change can't silently break older behaviour.
+
+### Added
+- `docs/testing.md` in the template: four test layers (unit, integration, contract, end-to-end), rules, tools and commands, test data, CI, and a **coverage map** showing which tests prove each requirement, endpoint and flow.
+- A **Testing** section in the project's `CLAUDE.md`; the definition of done now requires the **full** suite to pass, tests for new behaviour, regression tests for bug fixes, and an updated coverage map.
+- Plans get a **Tests** section listing tests per layer, written before or with the code.
+- Code folders list commands per layer and an "all tests" command; tracker task T-004 sets testing up.
+- `/done` runs the full suite and refuses to weaken failing tests; `/kickoff` adds coverage-map rows for every goal; `/retro` checks the map is complete; `check-project.sh` requires `docs/testing.md`.
+- Learning mode explains what each test proves; production mode runs the suite in CI on every push.
+
 ## 2.0.0 (2026-10-18)
 
 The full project lifecycle, with learning built in.

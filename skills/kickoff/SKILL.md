@@ -47,7 +47,11 @@ Split every unknown into one of three kinds, and give each a tracker task in **N
 
 Order them: what blocks the first plan comes first.
 
-## 5. Record
+## 5. Connect requirements to tests
+
+Add a row to the coverage map in `docs/testing.md` for every goal and success criterion, with the Tests column left as `to do`. These rows are how the project later proves it did what the charter promised. Testing setup itself is task T-004; do it as soon as the stack is chosen.
+
+## 6. Record
 
 - Log scope decisions that had real alternatives in `docs/decisions.md` (for example, "web only, no mobile app"), with the next D-number.
 - Update the charter's row in `docs/README.md` (status `current`, today's date).
@@ -55,6 +59,6 @@ Order them: what blocks the first plan comes first.
 - Set the **Phase** line in the root `CLAUDE.md` to `Research`.
 - Run `bash "<kit>/new-project/scripts/check-project.sh"` and fix what it reports.
 
-## 6. Hand over
+## 7. Hand over
 
 Show the user the charter in a few lines (one line, success criteria, non-goals) and the ordered list of research and learning tasks. Suggest the first one. Don't start coding: the next step is research, then `/feature-plan`.

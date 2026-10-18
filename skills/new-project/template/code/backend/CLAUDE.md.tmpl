@@ -8,11 +8,15 @@ Run these from this folder. Fill them in once they are known, and keep them curr
 
 - **Install:** `TBD`
 - **Run:** `TBD`
-- **Test:** `TBD`
+- **Unit tests:** `TBD`
+- **Integration tests:** `TBD`
+- **Contract tests:** `TBD`
+- **All tests (the full suite):** `TBD`
 
 ## Conventions
 
 - `docs/api.md` at the project root is the contract with the frontend. Follow it exactly. If the API has to change, update `docs/api.md` in the same change and log the decision.
 - List every new setting in `.env.example` in this folder (create it if it's missing; names and safe example values only, never real secrets) **and** in the settings table of `docs/runbook.md`.
+- Tests follow `docs/testing.md`: unit tests in `tests/unit/`, integration tests in `tests/integration/`, contract tests against `docs/api.md` in `tests/contract/`. Run the full suite before calling a task done.
 - Never open real env files.
 {{separate}}- This folder is its own git repository. Commit here, not at the project root.

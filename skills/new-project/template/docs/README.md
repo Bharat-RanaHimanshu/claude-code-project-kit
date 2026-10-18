@@ -15,6 +15,7 @@ Living documentation: kept true to the code and updated as the project changes. 
 | [architecture.md](architecture.md) | How the system is put together, and why | not started | {{DATE}} |
 | [api.md](api.md) | The contract between frontend and backend | not started | {{DATE}} |
 | [runbook.md](runbook.md) | How to set up, run, test, deploy and fix it | not started | {{DATE}} |
+| [testing.md](testing.md) | Test layers, rules, commands and the coverage map | not started | {{DATE}} |
 | [glossary.md](glossary.md) | Every project term, defined once | current | {{DATE}} |
 | [decisions.md](decisions.md) | Decision log, D-001 and up, append-only | current | {{DATE}} |
 | [learnings.md](learnings.md) | Lessons log, L-001 and up, append-only | current | {{DATE}} |

@@ -1,7 +1,7 @@
 # claude-code-project-kit
 
 [![tests](https://github.com/Bharat-RanaHimanshu/claude-code-project-kit/actions/workflows/test.yml/badge.svg)](https://github.com/Bharat-RanaHimanshu/claude-code-project-kit/actions/workflows/test.yml)
-![version](https://img.shields.io/badge/version-2.0.0-2a78d6)
+![version](https://img.shields.io/badge/version-2.1.0-2a78d6)
 ![bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-52514e)
 [![license: MIT](https://img.shields.io/badge/license-MIT-0ca30c)](LICENSE)
 
@@ -9,6 +9,7 @@
 
 - **No more lost context.** Work is resumed from files (`/pickup`, `/handoff`), not from memory, so a new session or a full context window costs nothing.
 - **Reasons, not just results.** Decisions, research, plans and lessons are written down as the project happens, each with an ID you can follow.
+- **Nothing old breaks silently.** Every project gets a test strategy (unit, integration, contract, end-to-end), plans list their tests up front, bugs get a regression test first, and the full suite runs before any task counts as done.
 - **Learn while you build.** A learning mode makes Claude explain the why, introduce concepts before using them, and check your understanding.
 - **Cheap by default.** Everything is Markdown. HTML pages are generated only when you ask, mostly by a script rather than by Claude.
 
@@ -35,10 +36,10 @@ flowchart LR
 | Start | **`/kickoff`** | Writes `docs/charter.md` (problem, goals, success criteria, scope, non-goals) and turns the unknowns into research and learning tasks. |
 | Decide | **`/research-report`** | Researches a "which option?" question with sources and writes `research/YYYY-MM-DD-topic.md`: answer first, options compared, recommendation. Logs the decisions. |
 | Learn and explain | **`/deep-doc`** | Detailed docs for features, flows, architecture and **concepts**, with a fixed outline: mental model, diagram first, trade-offs linked to decisions, worked example, where it is in the code. |
-| Plan | **`/feature-plan`** | One plan per feature (goal, steps, files, risks, how to check), approved by you before any code changes. |
+| Plan | **`/feature-plan`** | One plan per feature (goal, steps, files, risks, and the tests per layer), approved by you before any code changes. |
 | Build | **`/pickup`** | Starts a session: reads the handoff and tracker, compares them with git, reports where things stand in ten lines. |
 | Build | **`/handoff`** | Ends a session: logs decisions and lessons, updates the tracker, rewrites `session/HANDOFF.md` for a reader with no memory. |
-| Finish a task | **`/done`** | Runs the definition of done for real: tests, docs, decisions, lessons, the plan's Outcome, checks, commit. |
+| Finish a task | **`/done`** | Runs the definition of done for real: the full test suite, docs, decisions, lessons, the plan's Outcome, checks, commit. |
 | Report | **`/status-brief`** | A one-page, plain-language brief for your team head: status, risks, decisions needed, next steps with dates. |
 | Close | **`/retro`** | Brings every doc up to date and writes `docs/story.md`: timeline, key decisions and why, lessons, test-yourself questions, and a reading guide. |
 
@@ -58,6 +59,7 @@ my-app/
 ├── docs/
 │   ├── charter.md       why the project exists
 │   ├── architecture.md  api.md  runbook.md  glossary.md
+│   ├── testing.md       test layers, rules, commands, and what proves each requirement
 │   ├── decisions.md     D-001…  append-only, with alternatives and reasons
 │   ├── learnings.md     L-001…  bugs, dead ends, surprises, and the lesson
 │   ├── tracker.md       T-001…  Now / Next / Blocked / Done
@@ -109,6 +111,7 @@ This copies the skills into `~/.claude/skills`, so they work in every project on
 | Explanations | The why before each step; concepts introduced before they're used | Short |
 | When you could try it yourself | A hint first, the solution if you ask | Claude does it |
 | End of each plan | You explain the key idea back, or predict a change | Tests and a security review where it matters |
+| Tests | Claude says what each test proves; you're offered one to write yourself per plan | Full suite in CI on every push; a red build blocks merging |
 | Lessons | Every bug and dead end, with the general rule | Notable bugs and incidents |
 
 Both keep the same decision log, lessons log and final story.
@@ -120,6 +123,7 @@ Both keep the same decision log, lessons log and final story.
 - **Never overwrite.** The setup script only adds missing files; running it twice changes nothing.
 - **IDs from a script.** Decision, task and lesson numbers come from `next-id.sh`, so they're never miscounted or reused.
 - **Conventions are checked, not hoped for.** `check-project.sh` reports missing index rows, broken links, numbering gaps, outdated pages and unfinished plans.
+- **Tested in layers.** Unit tests for logic, integration tests where parts meet, contract tests against `docs/api.md`, and a few end-to-end tests for key journeys. A coverage map in `docs/testing.md` shows which tests prove each requirement.
 - **Lessons survive.** The handoff is rewritten every session; anything learned goes into the append-only `docs/learnings.md` first.
 
 ### HTML, only when you ask

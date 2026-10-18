@@ -79,9 +79,10 @@ check "HANDOFF.md is committed (solo)" 'git -C "$A" ls-files --error-unmatch ses
 check "every folder has a README.md" '[ -z "$(cd "$A" && find . -type d ! -path "./.git*" ! -path "./.claude*" ! -path "./.vscode*" | while IFS= read -r d; do [ -f "$d/README.md" ] || echo "$d"; done)" ]'
 check "generated files are LF-only" '! grep -rlq "$(printf "\r")" "$A" --exclude-dir=.git'
 check "settings.json and extensions.json are valid JSON" 'json_ok "$A/.claude/settings.json" && json_ok "$A/.vscode/extensions.json"'
+check "testing strategy in place (docs/testing.md, CLAUDE.md, plan format)" '[ -f "$A/docs/testing.md" ] && grep -q "^## Testing" "$A/CLAUDE.md" && grep -q "full\*\* test suite passes" "$A/CLAUDE.md" && grep -q "^## Tests" "$A/session/plans/README.md" && grep -q "Integration tests" "$A/code/backend/CLAUDE.md" && grep -q "End-to-end tests" "$A/code/frontend/CLAUDE.md"'
 check "root CLAUDE.md under 200 lines" '[ "$(wc -l < "$A/CLAUDE.md")" -lt 200 ]'
 check "check-project passes on a fresh project" '"$B" "$CHECK" "$A" >/dev/null'
-check "next-id: D-002, T-004, L-001" '[ "$("$B" "$NEXT" D "$A")" = D-002 ] && [ "$("$B" "$NEXT" T "$A")" = T-004 ] && [ "$("$B" "$NEXT" L "$A")" = L-001 ]'
+check "next-id: D-002, T-005, L-001" '[ "$("$B" "$NEXT" D "$A")" = D-002 ] && [ "$("$B" "$NEXT" T "$A")" = T-005 ] && [ "$("$B" "$NEXT" L "$A")" = L-001 ]'
 
 # --------------------------------------------------------------------------
 section "Mode B: production + team + separate repositories + git"

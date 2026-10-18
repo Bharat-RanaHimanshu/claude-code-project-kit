@@ -13,7 +13,7 @@ The goal: someone (including the user, months from now) can understand **what wa
 
 Use subagents to compare each doc with the final code (one per area: architecture, each feature, each flow, the API, the runbook). For every difference, update the doc following the deep-doc rules, and set its row in `docs/README.md` to `current` with today's date. Docs that no longer apply are marked `outdated` with one line saying why, not deleted.
 
-Also check: every decision has a status (superseded ones say so), the tracker's open tasks are either done, moved to a "Later" list, or dropped with a reason, and the charter's success criteria have a verdict (met, partly, not met).
+Run the full test suite and record the result. Check the coverage map in `docs/testing.md`: every goal, success criterion, endpoint and flow has a test, or a line saying why not. Also check: every decision has a status (superseded ones say so), the tracker's open tasks are either done, moved to a "Later" list, or dropped with a reason, and the charter's success criteria have a verdict (met, partly, not met).
 
 ## 2. Consolidate the lessons
 

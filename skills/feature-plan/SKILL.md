@@ -1,6 +1,6 @@
 ---
 name: feature-plan
-description: Write the plan for one feature or change in a kit project before any code is touched, in session/plans/<feature>.md (goal, context, concepts involved, small numbered steps, files to change, risks, how we'll check it works), link it to a tracker task, then stop and wait for the user's approval. Use before any non-trivial work in a project with session/plans/, or when the user says plan this feature, let's plan, how should we build this, or runs /feature-plan.
+description: Write the plan for one feature or change in a kit project before any code is touched, in session/plans/<feature>.md (goal, context, concepts involved, small numbered steps, files to change, risks, and the tests per layer: unit, integration, contract, end-to-end), link it to a tracker task, then stop and wait for the user's approval. Use before any non-trivial work in a project with session/plans/, or when the user says plan this feature, let's plan, how should we build this, or runs /feature-plan.
 argument-hint: "<feature>"
 ---
 
@@ -32,12 +32,12 @@ Name it after the feature, lower case with hyphens. Use the format in `session/p
 - **Steps:** numbered, small, each checkable on its own (`1. [ ] …`). A step that takes more than an hour or touches many files is too big: split it.
 - **Files to change:** path, and what changes.
 - **Risks:** each with how we'll reduce it or notice it.
-- **How we'll check it works:** tests to add or run, manual checks with expected results.
+- **Tests:** written from the goal, before the code exists, following `docs/testing.md`. For each layer, name the tests to add and what each proves: **unit** for the logic of each step, **integration** where parts meet, **contract** for every endpoint added or changed in `docs/api.md`, **end-to-end** only if a journey in `docs/flows/` changes, a **regression** test first for a bug fix, and any **manual checks** with expected results. Steps that add behaviour include writing its tests (for example, `3. [ ] Write the unit tests for the price calculation, then the code`).
 - **Outcome:** leave the placeholder; `/done` fills it.
 
 ## 3. Stop for approval
 
-Show the user a short summary: goal, number of steps, the main risk, and anything you need them to decide. **Don't change any code until they approve.** When they do:
+Show the user a short summary: goal, number of steps, the tests per layer, the main risk, and anything you need them to decide. **Don't change any code until they approve.** When they do:
 
 - set **Status** to `approved`;
 - move the task to **Now** in `docs/tracker.md`;

@@ -12,6 +12,10 @@ This repository is the kit itself: Claude Code skills, a project template and he
 - Inline scripts in `page-shell.html` must never contain the text `</script>`, not even in a comment.
 - Library versions in the page shell are exact and carry SRI hashes; update both together.
 
+## Commits
+
+- Commits are authored by the repository owner. Commit messages and pull requests contain no co-author, session or tool attribution lines.
+
 ## Before committing
 
 1. `bash tests/run-tests.sh` passes (and `shellcheck -s bash skills/*/scripts/*.sh install.sh tests/*.sh` is clean).

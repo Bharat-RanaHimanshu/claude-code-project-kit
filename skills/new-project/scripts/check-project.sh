@@ -21,7 +21,7 @@ echo "Checking $ROOT"
 
 # 1. The standard files exist.
 for p in CLAUDE.md README.md inputs/README.md research/README.md code/README.md \
-         docs/README.md docs/charter.md docs/decisions.md docs/learnings.md \
+         docs/README.md docs/charter.md docs/decisions.md docs/learnings.md docs/testing.md \
          docs/tracker.md docs/glossary.md session/README.md session/plans/README.md; do
   [ -e "$ROOT/$p" ] || problem "missing $p (run /new-project again to add missing files)"
 done

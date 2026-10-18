@@ -21,6 +21,7 @@ Set up on {{DATE}} with [claude-code-project-kit](https://github.com/Bharat-Rana
 - **Where does it stand?** The latest brief in `docs/briefs/`, then `docs/tracker.md`.
 - **How does it work?** `docs/architecture.md`, then `docs/features/`, `docs/flows/` and `docs/concepts/`.
 - **How do I run it?** `docs/runbook.md`.
+- **How is it tested?** `docs/testing.md`.
 - **Why was it built this way?** `docs/decisions.md`.
 
 ## Working with Claude Code

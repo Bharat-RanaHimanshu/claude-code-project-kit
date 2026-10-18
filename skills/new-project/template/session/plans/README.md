@@ -40,9 +40,16 @@ The ideas this work relies on, with links to `docs/concepts/` (new ones get a co
 
 - Risk → how we'll reduce it, or how we'll notice it.
 
-## How we'll check it works
+## Tests
 
-- Tests to add or run, and manual checks with their expected results.
+Written before or with the code, from the goal, not from the finished code:
+
+- **Unit:** the logic each step adds or changes.
+- **Integration:** where the parts meet (API and database, services).
+- **Contract:** endpoints added or changed in `docs/api.md`.
+- **End-to-end:** only if a journey in `docs/flows/` changes.
+- **Regression:** for a bug fix, the test that fails before the fix.
+- **Manual checks:** anything not automated, with the expected result.
 
 ## Outcome
 

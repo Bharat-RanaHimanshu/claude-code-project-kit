@@ -58,7 +58,7 @@ What can go wrong, what the user sees, how the system recovers.
 `path/to/file.ext`: what lives there (function and class names).
 
 ## How to check it works
-Commands, tests or manual steps, with expected results.
+The tests that cover it, by name and layer (as in the coverage map in docs/testing.md), then commands or manual steps with expected results.
 ```
 
 ## Outline: concepts
