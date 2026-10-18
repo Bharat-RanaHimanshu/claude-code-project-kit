@@ -1,0 +1,80 @@
+<p class="lead">This page shows every component of the shared page shell, as used by rich pages.</p>
+
+<div class="tiles">
+  <div class="tile"><div class="tile-value">42%</div><div class="tile-label">Faster checkout</div><div class="tile-note">vs. March</div></div>
+  <div class="tile"><div class="tile-value">$1,240</div><div class="tile-label">Monthly cost</div></div>
+  <div class="tile"><div class="tile-value">3</div><div class="tile-label">Open risks</div></div>
+</div>
+
+<h2>Callouts and badges</h2>
+<aside class="callout"><p class="callout-title">Note</p><p>A neutral note for context.</p></aside>
+<aside class="callout tip"><p class="callout-title">Tip</p><p>Something that saves time.</p></aside>
+<aside class="callout warning"><p class="callout-title">Watch out</p><p>Tokens expire after 15 minutes.</p></aside>
+<aside class="callout danger"><p class="callout-title">Danger</p><p>This deletes data.</p></aside>
+<p>Status: <span class="badge good">On track</span> <span class="badge warn">At risk</span> <span class="badge bad">Blocked</span> <span class="badge info">In progress</span> <span class="badge">Not started</span></p>
+
+<h2>Diagrams</h2>
+<h3>How the parts connect</h3>
+<pre class="mermaid">
+flowchart LR
+  B[Browser] -->|POST /login| A[API]
+  A -->|checks password| D[(Users DB)]
+  A -->|issues token| B
+</pre>
+<h3>Order of events</h3>
+<pre class="mermaid">
+sequenceDiagram
+  participant U as User
+  participant A as API
+  U->>A: Submit form
+  A-->>U: 200 OK &amp; token
+</pre>
+
+<h2>Charts</h2>
+<figure class="chart">
+  <script type="application/json">
+  {"type":"bar","title":"Monthly cost by option","labels":["Option A","Option B","Option C"],"series":[{"name":"Cost","data":[120,340,90]}],"prefix":"$"}
+  </script>
+  <figcaption>Cost at 10,000 users <a class="cite" href="#s1">[1]</a>.</figcaption>
+</figure>
+<figure class="chart">
+  <script type="application/json">
+  {"type":"line","title":"Response time (p95)","labels":["Jan","Feb","Mar","Apr","May"],"series":[{"name":"Option A","data":[220,210,190,180,175]},{"name":"Option B","data":[260,240,250,230,215]}],"suffix":" ms"}
+  </script>
+</figure>
+
+<h2>Options compared</h2>
+<table>
+  <thead><tr><th>Option</th><th class="num">Cost / month</th><th>Setup effort</th><th>Lock-in</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Option A</td><td class="num">$120</td><td>Low</td><td>Medium</td><td>Managed service with a generous free tier and good docs.</td></tr>
+    <tr><td>Option B</td><td class="num">$340</td><td>Medium</td><td>Low</td><td>Open source; self-hosted on our own servers.</td></tr>
+    <tr><td>Option C</td><td class="num">$90</td><td>High</td><td>High</td><td>Cheapest, but proprietary APIs throughout.</td></tr>
+  </tbody>
+</table>
+
+<h2>Tabs, steps and details</h2>
+<div class="tabs">
+  <section data-tab="Option A"><p>Managed. Diagram inside a tab:</p>
+<pre class="mermaid">
+stateDiagram-v2
+  [*] --> Draft
+  Draft --> Published: approve
+  Published --> [*]
+</pre>
+  </section>
+  <section data-tab="Option B"><p>Self-hosted. Chart inside a hidden tab:</p>
+    <figure class="chart"><script type="application/json">{"type":"pie","labels":["Compute","Storage","Network"],"series":[{"name":"Share","data":[60,25,15]}],"suffix":"%"}</script></figure>
+  </section>
+</div>
+<div class="steps">
+  <section data-step="The user submits the form"><p>The browser sends email and password.</p></section>
+  <section data-step="The API checks the password"><p>It compares the hash.</p></section>
+  <section data-step="A session token is returned"><p>Valid for 15 minutes.</p></section>
+</div>
+<details><summary>Full error list</summary><p>E001: invalid password. E002: account locked.</p></details>
+
+<h2>Sources</h2>
+<ol class="sources">
+  <li id="s1"><a href="https://example.com/pricing">Pricing</a>. Example Inc., accessed 2026-10-18.</li>
+</ol>

@@ -1,0 +1,5 @@
+# Keep LF everywhere: bash scripts with CRLF fail on Windows ($'\r': command not found).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.zip binary

@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>{{TITLE}}</title>
+<meta name="kit-source" content="{{SOURCE}}" data-sum="{{SOURCE_SUM}}" data-kind="{{KIND}}">
+<style>
+/* Shared page shell: visual docs, research reports and HTML briefs.
+   Light and dark follow the system setting. Components: see references/page-shell.md. */
+:root {
+  color-scheme: light;
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --page: #f9f9f7;
+  --surface: #fcfcfb;
+  --surface-2: #f0efec;
+  --ink: #0b0b0b;
+  --ink-2: #52514e;
+  --muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11, 11, 11, 0.10);
+  --link: #1c5cab;
+  --accent: #2a78d6;
+  --node: #e9f1fb;
+  --node-border: #6da7ec;
+  /* categorical series, fixed order */
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+  --s5: #e87ba4; --s6: #008300; --s7: #6250d6; --s8: #e34948;
+  /* status: always shown with a label, never colour alone */
+  --good: #0ca30c; --warning: #fab219; --serious: #ec835a; --critical: #d03b3b;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --surface-2: #262624;
+    --ink: #f0efec;
+    --ink-2: #c3c2b7;
+    --muted: #898781;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --link: #86b6ef;
+    --accent: #3987e5;
+    --node: #16243a;
+    --node-border: #3987e5;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+    --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: 16px; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font: 16px/1.65 var(--font);
+  -webkit-text-size-adjust: 100%;
+}
+a { color: var(--link); }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* layout: contents sidebar + main column */
+.layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 48px;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.toc {
+  position: sticky; top: 0; align-self: start;
+  max-height: 100vh; overflow-y: auto;
+  padding: 40px 0 24px;
+  font-size: 14px;
+}
+.toc-title { font-weight: 600; color: var(--ink-2); text-transform: uppercase; letter-spacing: .04em; font-size: 12px; margin: 0 0 8px; }
+.toc-toggle { display: none; }
+.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc li a {
+  display: block; padding: 4px 8px; border-left: 2px solid var(--grid);
+  color: var(--ink-2); text-decoration: none; line-height: 1.4;
+}
+.toc li.toc-h3 a { padding-left: 20px; font-size: 13px; }
+.toc li a:hover { color: var(--ink); }
+.toc li a.active { color: var(--ink); border-left-color: var(--accent); font-weight: 600; }
+.toc.toc-empty { visibility: hidden; }
+main { min-width: 0; max-width: 800px; padding: 40px 0 96px; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0 16px; }
+  .toc { position: static; max-height: none; padding: 12px 0 0; }
+  .toc.toc-empty { display: none; }
+  .toc-title { display: none; }
+  .toc-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    font: inherit; font-size: 14px; color: var(--ink); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer;
+  }
+  .toc ol { display: none; margin-top: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
+  .toc.open ol { display: block; }
+  main { padding-top: 20px; }
+}
+
+/* text */
+.page-head { margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--grid); }
+h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 8px; letter-spacing: -0.01em; }
+.meta { color: var(--ink-2); font-size: 14px; margin: 0; }
+h2 { font-size: 1.45rem; line-height: 1.3; margin: 2.4em 0 .6em; }
+h3 { font-size: 1.15rem; line-height: 1.35; margin: 1.8em 0 .5em; }
+h4 { font-size: 1rem; margin: 1.5em 0 .4em; }
+p, ul, ol { margin: 0 0 1em; }
+li { margin: .25em 0; }
+.lead { font-size: 1.15rem; line-height: 1.55; }
+code { font-family: var(--mono); font-size: .9em; background: var(--surface-2); padding: .1em .35em; border-radius: 4px; }
+pre { font-family: var(--mono); font-size: 14px; line-height: 1.5; background: var(--surface-2); border-radius: 8px; padding: 14px 16px; overflow-x: auto; }
+pre code { background: none; padding: 0; }
+blockquote { margin: 1em 0; padding: 0 0 0 16px; border-left: 3px solid var(--grid); color: var(--ink-2); }
+hr { border: 0; border-top: 1px solid var(--grid); margin: 2em 0; }
+img { max-width: 100%; height: auto; }
+
+/* tables: scroll sideways on narrow screens */
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1.25em 0; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th, td { padding: 9px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--grid); }
+th { background: var(--surface-2); font-weight: 600; white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* callouts */
+.callout {
+  --c: var(--accent);
+  margin: 1.25em 0; padding: 12px 16px;
+  border: 1px solid var(--border); border-left: 4px solid var(--c); border-radius: 8px;
+  background: color-mix(in srgb, var(--c) 8%, var(--surface));
+}
+.callout > :last-child { margin-bottom: 0; }
+.callout-title { font-weight: 600; margin: 0 0 4px; }
+.callout.tip { --c: var(--good); }
+.callout.warning { --c: var(--warning); }
+.callout.danger { --c: var(--critical); }
+
+/* status badges */
+.badge {
+  --c: var(--muted);
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 1px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; line-height: 1.6;
+  border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+  background: color-mix(in srgb, var(--c) 14%, var(--surface));
+  color: var(--ink); white-space: nowrap; vertical-align: middle;
+}
+.badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+.badge.good { --c: var(--good); }
+.badge.warn { --c: var(--warning); }
+.badge.bad { --c: var(--critical); }
+.badge.info { --c: var(--accent); }
+
+/* headline number tiles */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 1.5em 0; }
+.tile { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.tile-value { font-size: 2rem; font-weight: 650; line-height: 1.1; letter-spacing: -0.01em; }
+.tile-label { color: var(--ink-2); font-size: 14px; margin-top: 6px; }
+.tile-note { color: var(--ink-2); font-size: 13px; margin-top: 2px; }
+
+/* collapsible sections */
+details { margin: 1em 0; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+details > summary { cursor: pointer; padding: 10px 14px; font-weight: 600; list-style-position: inside; }
+details[open] > summary { border-bottom: 1px solid var(--grid); }
+details > :not(summary) { margin-left: 14px; margin-right: 14px; }
+details > :last-child { margin-bottom: 12px; }
+details > summary + * { margin-top: 12px; }
+
+/* tabs and step-through: inactive panels stay laid out (off screen) so diagrams and charts measure correctly */
+.tabs, .steps { position: relative; margin: 1.5em 0; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; }
+.is-hidden { position: absolute !important; left: -200vw; top: 0; width: 100%; visibility: hidden; }
+.tab-list { display: flex; gap: 2px; overflow-x: auto; border-bottom: 1px solid var(--grid); padding: 0 8px; }
+.tab {
+  font: inherit; font-size: 15px; color: var(--ink-2); background: none; border: 0;
+  border-bottom: 2px solid transparent; padding: 10px 12px; cursor: pointer; white-space: nowrap;
+}
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 600; }
+.tab-panel, .step-panel { padding: 16px 18px 4px; }
+.steps-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 12px 18px; border-bottom: 1px solid var(--grid); }
+.steps-count { color: var(--ink-2); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.steps-title { font-weight: 600; }
+.steps-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 18px; border-top: 1px solid var(--grid); }
+.steps-dots { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.steps-dot { width: 10px; height: 10px; padding: 0; border-radius: 50%; border: 1px solid var(--muted); background: transparent; cursor: pointer; }
+.steps-dot[aria-current="step"] { background: var(--accent); border-color: var(--accent); }
+.btn {
+  font: inherit; font-size: 14px; color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; cursor: pointer; min-height: 36px;
+}
+.btn:disabled { opacity: .45; cursor: default; }
+
+/* diagrams and charts */
+pre.mermaid { background: var(--surface); border: 1px solid var(--border); text-align: center; color: var(--ink-2); }
+pre.mermaid svg { max-width: 100%; height: auto; }
+.chart { margin: 1.5em 0; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+.chart-canvas { position: relative; height: 320px; }
+.chart figcaption { color: var(--ink-2); font-size: 14px; margin-top: 8px; }
+.chart details { margin-bottom: 0; }
+.load-note { color: var(--ink-2); font-size: 13px; font-style: italic; margin: 6px 0 0; }
+
+/* sources */
+ol.sources { font-size: 14px; color: var(--ink-2); padding-left: 1.6em; }
+ol.sources li { margin: .4em 0; overflow-wrap: anywhere; }
+ol.sources li:target { background: color-mix(in srgb, var(--accent) 12%, transparent); border-radius: 4px; }
+a.cite { font-size: .75em; vertical-align: super; line-height: 0; text-decoration: none; }
+
+@media print {
+  body { background: #fff; }
+  .toc, .tab-list, .steps-nav { display: none !important; }
+  .layout { display: block; padding: 0; }
+  main { max-width: none; padding: 0; }
+  .is-hidden { position: static !important; visibility: visible !important; }
+  .tab-panel::before { content: attr(data-tab); display: block; font-weight: 600; margin-bottom: 8px; }
+  .tabs, .steps, .chart, details, .tile { break-inside: avoid; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+li > input[type="checkbox"] { margin: 0 6px 0 0; vertical-align: -1px; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc" aria-label="Contents">
+    <p class="toc-title">Contents</p>
+    <button class="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-list">☰ Contents</button>
+    <ol id="toc-list"></ol>
+  </nav>
+  <main id="content">
+    <header class="page-head">
+      <h1>{{TITLE}}</h1>
+      <p class="meta">{{META}}</p>
+    </header>
+<!-- CONTENT -->
+  </main>
+</div>
+<script>
+(function () {
+  'use strict';
+
+  // Loaded from jsDelivr only when the page needs them. SRI hashes pin the exact files.
+  var LIBS = {
+    mermaid: {
+      src: 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js',
+      sri: 'sha384-rbtjAdnIQE/aQJGEgXrVUlMibdfTSa4PQju4HDhN3sR2PmaKFzhEafuePsl9H/9I'
+    },
+    chart: {
+      src: 'https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.js',
+      sri: 'sha384-zYPBGXwO4633CABX/5Spf6emCKUJCfoOkhOMYyxMsatqQZPnDblmmOewfjsIVWCM'
+    },
+    marked: {
+      src: 'https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js',
+      sri: 'sha384-2vpGtuKqJvFlwJqYnf/wUMuzUfhUnYBt9oay0e2yaFcq0Dh6/aEbQ8YAOeKGzlYo'
+    },
+    purify: {
+      src: 'https://cdn.jsdelivr.net/npm/dompurify@3.4.16/dist/purify.min.js',
+      sri: 'sha384-a7SzOxErzJ3ZpQz0zJ32d67dSitNzPcbfybc/ykU9KJhMgZkwqfSxlhhdJRS+XGL'
+    }
+  };
+  var FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+  var main = document.getElementById('content');
+  var toc = document.querySelector('.toc');
+  var tocList = document.getElementById('toc-list');
+  var darkQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  var sourceMeta = document.querySelector('meta[name="kit-source"]');
+  var SOURCE = sourceMeta ? sourceMeta.getAttribute('content') : '';
+  var uid = 0;
+
+  function each(list, fn) { Array.prototype.forEach.call(list, fn); }
+  function make(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+  function token(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function inWidget(node) { return !!(node.parentElement && node.parentElement.closest('.tabs, .steps')); }
+  function note(after, text) {
+    var p = make('p', 'load-note', text);
+    after.parentNode.insertBefore(p, after.nextSibling);
+  }
+  function wrapTable(table) {
+    if (table.parentNode.classList && table.parentNode.classList.contains('table-wrap')) return;
+    var box = make('div', 'table-wrap');
+    table.parentNode.insertBefore(box, table);
+    box.appendChild(table);
+  }
+  function load(lib) {
+    return new Promise(function (resolve, reject) {
+      var s = document.createElement('script');
+      s.src = lib.src;
+      s.integrity = lib.sri;
+      s.crossOrigin = 'anonymous';
+      s.onload = resolve;
+      s.onerror = function () { reject(new Error('Could not load ' + lib.src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  // ---- Markdown pages (quick pages from md-to-html.sh): render, sanitise, upgrade
+  function decodeBase64(text) {
+    var bytes = atob(text.replace(/\s+/g, ''));
+    var arr = new Uint8Array(bytes.length);
+    for (var i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(arr);
+  }
+  var ALERTS = {
+    NOTE: ['', 'Note'], TIP: ['tip', 'Tip'], IMPORTANT: ['', 'Important'],
+    WARNING: ['warning', 'Warning'], CAUTION: ['danger', 'Caution']
+  };
+  function upgradeMarkdown(box) {
+    each(box.querySelectorAll('pre > code.language-mermaid'), function (code) {
+      code.parentNode.replaceWith(make('pre', 'mermaid', code.textContent));
+    });
+    each(box.querySelectorAll('pre > code.language-chart'), function (code) {
+      var fig = make('figure', 'chart');
+      var json = document.createElement('script');
+      json.type = 'application/json';
+      json.textContent = code.textContent;
+      fig.appendChild(json);
+      code.parentNode.replaceWith(fig);
+    });
+    each(box.querySelectorAll('blockquote'), function (quote) {
+      var first = quote.firstElementChild;
+      if (!first || first.tagName !== 'P') return;
+      var m = /^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*(<br\s*\/?>)?\s*/i.exec(first.innerHTML);
+      if (!m) return;
+      var kind = ALERTS[m[1].toUpperCase()];
+      first.innerHTML = first.innerHTML.slice(m[0].length);
+      var aside = make('aside', 'callout' + (kind[0] ? ' ' + kind[0] : ''));
+      aside.appendChild(make('p', 'callout-title', kind[1]));
+      while (quote.firstChild) aside.appendChild(quote.firstChild);
+      if (!first.textContent.trim() && !first.children.length) first.remove();
+      quote.replaceWith(aside);
+    });
+  }
+  function renderMarkdown(node) {
+    var text = decodeBase64(node.textContent);
+    return Promise.all([load(LIBS.marked), load(LIBS.purify)]).then(function () {
+      var box = document.createElement('div');
+      box.innerHTML = window.DOMPurify.sanitize(window.marked.parse(text, { gfm: true }));
+      upgradeMarkdown(box);
+      while (box.firstChild) node.parentNode.insertBefore(box.firstChild, node);
+    }, function () {
+      var pre = make('pre', null, text);
+      node.parentNode.insertBefore(pre, node);
+      note(pre, 'Markdown not rendered (no internet connection?). The raw text is shown.');
+    });
+  }
+
+  // ---- links between docs: .md links point at the generated pages next to this one
+  function resolvePath(fromFile, rel) {
+    var parts = fromFile.split('/');
+    parts.pop();
+    rel.split('/').forEach(function (p) {
+      if (p === '..') parts.pop();
+      else if (p && p !== '.') parts.push(p);
+    });
+    return parts.join('/');
+  }
+  function pageFor(path) {
+    if (path === 'docs/README.md') return 'index.html';
+    var m = /^(docs|research)\/(.+)\.md$/.exec(path);
+    if (!m || /^visual\//.test(m[2])) return null;
+    if (/(^|\/)README$/.test(m[2]) && path !== 'research/README.md') return null;
+    return ((m[1] === 'research' ? 'research/' : '') + m[2]).replace(/\//g, '-') + '.html';
+  }
+  function rewriteLinks(root) {
+    if (!SOURCE) return;
+    each(root.querySelectorAll('a[href]'), function (a) {
+      var href = a.getAttribute('href');
+      if (/^([a-z][a-z0-9+.-]*:|#|\/)/i.test(href)) return;
+      var hash = '';
+      var cut = href.indexOf('#');
+      if (cut >= 0) { hash = href.slice(cut); href = href.slice(0, cut); }
+      if (!href) return;
+      var target;
+      try { target = resolvePath(SOURCE, decodeURIComponent(href)); } catch (e) { return; }
+      var page = pageFor(target);
+      a.setAttribute('href', page ? page + hash : '../../' + target.split('/').map(encodeURIComponent).join('/') + hash);
+    });
+  }
+
+  // ---- everything else runs once the content is in place
+  function init() {
+    rewriteLinks(main);
+    each(main.querySelectorAll('table'), wrapTable);
+    buildContents();
+    buildTabs();
+    buildSteps();
+    buildCharts();
+    buildDiagrams();
+    if (darkQuery) {
+      var redraw = function () {
+        if (window.mermaid && diagrams.length) drawDiagrams();
+        if (window.Chart && charts.length) drawCharts();
+      };
+      if (darkQuery.addEventListener) darkQuery.addEventListener('change', redraw);
+      else if (darkQuery.addListener) darkQuery.addListener(redraw);
+    }
+  }
+
+  // ---- contents sidebar from h2/h3 (headings inside tabs and steps are skipped)
+  function buildContents() {
+    var used = {};
+    var heads = Array.prototype.filter.call(main.querySelectorAll('h2, h3'), function (h) { return !inWidget(h); });
+    heads.forEach(function (h) {
+      if (!h.id) {
+        var base = h.textContent.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'section';
+        var id = base, n = 2;
+        while (used[id] || document.getElementById(id)) id = base + '-' + n++;
+        h.id = id;
+      }
+      used[h.id] = true;
+      var li = make('li', 'toc-' + h.tagName.toLowerCase());
+      var a = make('a', null, h.textContent);
+      a.href = '#' + h.id;
+      li.appendChild(a);
+      tocList.appendChild(li);
+    });
+    if (!heads.length) toc.classList.add('toc-empty');
+    var toggle = toc.querySelector('.toc-toggle');
+    toggle.addEventListener('click', function () {
+      toggle.setAttribute('aria-expanded', String(toc.classList.toggle('open')));
+    });
+    tocList.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') { toc.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); }
+    });
+    if ('IntersectionObserver' in window && heads.length) {
+      var links = {};
+      each(tocList.querySelectorAll('a'), function (a) { links[a.getAttribute('href').slice(1)] = a; });
+      var spy = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          each(tocList.querySelectorAll('a.active'), function (a) { a.classList.remove('active'); });
+          if (links[entry.target.id]) links[entry.target.id].classList.add('active');
+        });
+      }, { rootMargin: '0px 0px -70% 0px' });
+      heads.forEach(function (h) { spy.observe(h); });
+    }
+  }
+
+  // ---- tabs: <div class="tabs"><section data-tab="Label">…</section>…</div>
+  function buildTabs() {
+    each(main.querySelectorAll('.tabs'), function (box) {
+      var panels = Array.prototype.filter.call(box.children, function (c) { return c.hasAttribute('data-tab'); });
+      if (!panels.length) return;
+      var list = make('div', 'tab-list');
+      list.setAttribute('role', 'tablist');
+      var buttons = panels.map(function (panel, i) {
+        var id = 'tab-' + (++uid);
+        var b = make('button', 'tab', panel.getAttribute('data-tab'));
+        b.type = 'button';
+        b.id = id;
+        b.setAttribute('role', 'tab');
+        if (!panel.id) panel.id = id + '-panel';
+        b.setAttribute('aria-controls', panel.id);
+        panel.setAttribute('role', 'tabpanel');
+        panel.setAttribute('aria-labelledby', id);
+        panel.classList.add('tab-panel');
+        b.addEventListener('click', function () { select(i); });
+        b.addEventListener('keydown', function (e) {
+          if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+          e.preventDefault();
+          var next = (i + (e.key === 'ArrowRight' ? 1 : -1) + panels.length) % panels.length;
+          select(next);
+          buttons[next].focus();
+        });
+        list.appendChild(b);
+        return b;
+      });
+      function select(n) {
+        buttons.forEach(function (b, i) {
+          var on = i === n;
+          b.setAttribute('aria-selected', String(on));
+          b.tabIndex = on ? 0 : -1;
+          panels[i].classList.toggle('is-hidden', !on);
+        });
+      }
+      box.insertBefore(list, box.firstChild);
+      select(0);
+    });
+  }
+
+  // ---- step-through: <div class="steps"><section data-step="Title">…</section>…</div>
+  function buildSteps() {
+    each(main.querySelectorAll('.steps'), function (box) {
+      var panels = Array.prototype.filter.call(box.children, function (c) { return c.hasAttribute('data-step'); });
+      if (!panels.length) return;
+      var head = make('div', 'steps-head');
+      head.setAttribute('aria-live', 'polite');
+      var count = make('span', 'steps-count');
+      var title = make('span', 'steps-title');
+      head.appendChild(count);
+      head.appendChild(title);
+      var nav = make('div', 'steps-nav');
+      var prev = make('button', 'btn', '← Previous');
+      var next = make('button', 'btn', 'Next →');
+      var dots = make('div', 'steps-dots');
+      prev.type = next.type = 'button';
+      var dotButtons = panels.map(function (panel, i) {
+        panel.classList.add('step-panel');
+        var d = make('button', 'steps-dot');
+        d.type = 'button';
+        d.setAttribute('aria-label', 'Step ' + (i + 1) + ': ' + panel.getAttribute('data-step'));
+        d.addEventListener('click', function () { go(i); });
+        dots.appendChild(d);
+        return d;
+      });
+      nav.appendChild(prev);
+      nav.appendChild(dots);
+      nav.appendChild(next);
+      var current = 0;
+      function go(n) {
+        current = n;
+        panels.forEach(function (p, i) { p.classList.toggle('is-hidden', i !== n); });
+        dotButtons.forEach(function (d, i) {
+          if (i === n) d.setAttribute('aria-current', 'step'); else d.removeAttribute('aria-current');
+        });
+        count.textContent = 'Step ' + (n + 1) + ' of ' + panels.length;
+        title.textContent = panels[n].getAttribute('data-step');
+        prev.disabled = n === 0;
+        next.disabled = n === panels.length - 1;
+      }
+      prev.addEventListener('click', function () { if (current > 0) go(current - 1); });
+      next.addEventListener('click', function () { if (current < panels.length - 1) go(current + 1); });
+      box.insertBefore(head, box.firstChild);
+      box.appendChild(nav);
+      go(0);
+    });
+  }
+
+  // ---- charts: figure.chart holding a JSON script tag (see references/page-shell.md)
+  var charts = [];
+  function format(spec, v) {
+    var text = typeof v === 'number' ? v.toLocaleString() : String(v);
+    return (spec.prefix || '') + text + (spec.suffix || '');
+  }
+  function dataTable(spec) {
+    var details = make('details');
+    details.appendChild(make('summary', null, 'Data table'));
+    var table = make('table');
+    var row = make('tr');
+    row.appendChild(make('th', null, ''));
+    spec.series.forEach(function (s) { row.appendChild(make('th', 'num', s.name || '')); });
+    var thead = make('thead');
+    thead.appendChild(row);
+    table.appendChild(thead);
+    var tbody = make('tbody');
+    spec.labels.forEach(function (label, r) {
+      var tr = make('tr');
+      tr.appendChild(make('td', null, label));
+      spec.series.forEach(function (s) { tr.appendChild(make('td', 'num', format(spec, s.data[r]))); });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    details.appendChild(table);
+    wrapTable(table);
+    return details;
+  }
+  function chartConfig(spec) {
+    if (spec.chartjs) return spec.chartjs;
+    var type = spec.type || 'bar';
+    var round = type === 'pie' || type === 'doughnut';
+    var colors = [];
+    for (var i = 1; i <= 8; i++) colors.push(token('--s' + i));
+    var count = round ? spec.labels.length : spec.series.length;
+    if (count > 8) throw new Error('More than 8 ' + (round ? 'slices' : 'series') + ': fold the smallest into "Other".');
+    var ink = token('--ink'), ink2 = token('--ink-2'), grid = token('--grid'), axis = token('--axis'), surface = token('--surface');
+    var datasets = spec.series.map(function (s, i) {
+      var d = { label: s.name, data: s.data };
+      if (round) {
+        d.backgroundColor = colors.slice(0, s.data.length);
+        d.borderColor = surface;
+        d.borderWidth = 2;
+      } else if (type === 'line') {
+        d.borderColor = d.backgroundColor = colors[i];
+        d.borderWidth = 2;
+        d.pointRadius = 0;
+        d.pointHoverRadius = 4;
+        d.pointHitRadius = 12;
+      } else {
+        d.backgroundColor = colors[i];
+        d.borderRadius = 4;
+        d.borderSkipped = 'start';
+        d.maxBarThickness = 48;
+      }
+      return d;
+    });
+    var horizontal = !!spec.horizontal && !round;
+    var options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      indexAxis: horizontal ? 'y' : 'x',
+      interaction: type === 'line' ? { mode: 'index', intersect: false } : { mode: 'nearest', intersect: true },
+      plugins: {
+        legend: {
+          display: round || spec.series.length > 1,
+          position: 'bottom',
+          labels: { color: ink2, usePointStyle: true, boxWidth: 10, boxHeight: 10 }
+        },
+        title: { display: !!spec.title, text: spec.title, color: ink, align: 'start', font: { size: 14, weight: '600' } },
+        tooltip: {
+          callbacks: {
+            label: function (c) {
+              var v = round ? c.parsed : (horizontal ? c.parsed.x : c.parsed.y);
+              var name = round ? c.label : c.dataset.label;
+              return (name ? name + ': ' : '') + format(spec, v);
+            }
+          }
+        }
+      }
+    };
+    if (!round) {
+      var value = {
+        stacked: !!spec.stacked,
+        beginAtZero: spec.beginAtZero !== false,
+        grid: { color: grid },
+        border: { display: false },
+        ticks: { color: ink2, callback: function (v) { return format(spec, v); } },
+        title: { display: !!spec.valueTitle, text: spec.valueTitle, color: ink2 }
+      };
+      var category = {
+        stacked: !!spec.stacked,
+        grid: { display: false },
+        border: { color: axis },
+        ticks: { color: ink2 },
+        title: { display: !!spec.categoryTitle, text: spec.categoryTitle, color: ink2 }
+      };
+      options.scales = horizontal ? { x: value, y: category } : { x: category, y: value };
+    }
+    return { type: type, data: { labels: spec.labels, datasets: datasets }, options: options };
+  }
+  function drawCharts() {
+    window.Chart.defaults.font.family = FONT;
+    charts.forEach(function (c) {
+      if (c.chart) c.chart.destroy();
+      try { c.chart = new window.Chart(c.canvas, chartConfig(c.spec)); }
+      catch (e) { c.box.style.display = 'none'; note(c.box, 'Chart error: ' + e.message); }
+    });
+  }
+  function buildCharts() {
+    each(main.querySelectorAll('figure.chart, div.chart'), function (fig) {
+      var script = fig.querySelector('script[type="application/json"]');
+      var spec;
+      try {
+        spec = JSON.parse(script ? script.textContent : '');
+        if (!spec.chartjs && (!Array.isArray(spec.labels) || !Array.isArray(spec.series))) throw new Error('needs "labels" and "series"');
+      } catch (e) {
+        fig.appendChild(make('p', 'load-note', 'Chart config error: ' + e.message));
+        return;
+      }
+      var box = make('div', 'chart-canvas');
+      if (spec.height) box.style.height = spec.height + 'px';
+      var canvas = make('canvas');
+      canvas.setAttribute('role', 'img');
+      canvas.setAttribute('aria-label', spec.title || 'Chart');
+      box.appendChild(canvas);
+      fig.insertBefore(box, fig.firstChild);
+      var table = spec.chartjs ? null : dataTable(spec);
+      if (table) fig.appendChild(table);
+      charts.push({ fig: fig, box: box, spec: spec, canvas: canvas, table: table, chart: null });
+    });
+    if (!charts.length) return;
+    load(LIBS.chart).then(drawCharts, function () {
+      charts.forEach(function (c) {
+        c.box.style.display = 'none';
+        if (c.table) c.table.open = true;
+        note(c.box, 'Chart not drawn (no internet connection?). The data table is shown instead.');
+      });
+    });
+  }
+
+  // ---- Mermaid diagrams: <pre class="mermaid">…</pre>
+  var diagrams = [];
+  function drawDiagrams() {
+    var palette = [];
+    for (var i = 1; i <= 8; i++) palette.push(token('--s' + i));
+    var vars = {
+      darkMode: !!(darkQuery && darkQuery.matches),
+      fontFamily: FONT,
+      fontSize: '15px',
+      background: token('--surface'),
+      primaryColor: token('--node'),
+      primaryTextColor: token('--ink'),
+      primaryBorderColor: token('--node-border'),
+      secondaryColor: token('--surface-2'),
+      tertiaryColor: token('--surface'),
+      lineColor: token('--ink-2'),
+      textColor: token('--ink'),
+      mainBkg: token('--node'),
+      nodeBorder: token('--node-border'),
+      clusterBkg: token('--surface-2'),
+      clusterBorder: token('--axis'),
+      edgeLabelBackground: token('--surface'),
+      noteBkgColor: token('--surface-2'),
+      noteTextColor: token('--ink'),
+      noteBorderColor: token('--axis'),
+      xyChart: { plotColorPalette: palette.join(', ') }
+    };
+    palette.forEach(function (c, i) { vars['pie' + (i + 1)] = c; });
+    diagrams.forEach(function (d) {
+      d.removeAttribute('data-processed');
+      d.textContent = d.getAttribute('data-source');
+    });
+    window.mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', theme: 'base', themeVariables: vars });
+    return window.mermaid.run({ nodes: diagrams, suppressErrors: true });
+  }
+  function buildDiagrams() {
+    diagrams = Array.prototype.slice.call(main.querySelectorAll('pre.mermaid'));
+    if (!diagrams.length) return;
+    diagrams.forEach(function (d) { d.setAttribute('data-source', d.textContent); });
+    load(LIBS.mermaid).then(drawDiagrams, function () {
+      diagrams.forEach(function (d) { note(d, 'Diagram not drawn (no internet connection?). Its source is shown above.'); });
+    });
+  }
+
+  var mdNode = document.getElementById('md-source');
+  if (mdNode) renderMarkdown(mdNode).then(init, init);
+  else init();
+})();
+</script>
+</body>
+</html>

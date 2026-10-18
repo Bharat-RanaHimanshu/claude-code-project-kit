@@ -1,0 +1,88 @@
+# {{PROJECT_NAME}}
+
+{{DESCRIPTION}}
+
+- **Created:** {{DATE}} with claude-code-project-kit v{{KIT_VERSION}}
+- **Phase:** Kickoff
+- **Backend stack:** {{BACKEND_STACK}}
+- **Frontend stack:** {{FRONTEND_STACK}}
+{{learning}}- **Purpose:** learning. Understanding matters as much as the result (see Working style).
+{{production}}- **Purpose:** production. It ships; correctness and safety come first (see Working style).
+{{solo}}- **Team:** solo. `session/HANDOFF.md` is committed with the project.
+{{team}}- **Team:** team. `session/HANDOFF.md` is git-ignored: it is my personal working state, not shared.
+{{single}}- **Code:** one repository. Backend and frontend are committed with this project.
+{{separate}}- **Code:** separate repositories. `code/backend/` and `code/frontend/` are clones of their own repositories and are git-ignored here.
+
+## Folder map
+
+| Folder | What it holds |
+|---|---|
+| `inputs/` | Documents the team gave me (requirements, plans, designs, client documents). Read-only; listed in `inputs/README.md`. |
+| `research/` | Finished research, one Markdown report per question. Read `research/README.md` first, not the reports. |
+| `code/backend/` | Backend code. Its own `CLAUDE.md` has the stack, commands and conventions. |
+| `code/frontend/` | Frontend code. Its own `CLAUDE.md` has the stack, commands and conventions. |
+| `docs/` | Living documentation: charter, architecture, API, concepts, decisions, learnings, tracker. `docs/README.md` lists every doc with its status. |
+| `session/` | Working state between sessions: `HANDOFF.md`, and `plans/` with one plan per feature (finished ones in `plans/done/`). |
+
+## Lifecycle
+
+1. **Kickoff** (`/kickoff`): write `docs/charter.md` (problem, goals, success criteria, scope) and list the unknowns.
+2. **Research and learn**: decision questions go to `/research-report`; concepts to understand go to `docs/concepts/` (deep-doc, kind `concept`).
+3. **Plan** (`/feature-plan`): one plan per feature in `session/plans/`, approved by me before any code changes.
+4. **Build**: resume with `/pickup`, save state with `/handoff`.
+5. **Finish each task** (`/done`): run the definition of done for real.
+6. **Close** (`/retro`): bring every doc up to date, write `docs/story.md` and its reading guide.
+
+## Workflow rules
+
+- **When resuming**, read `session/HANDOFF.md` and `docs/tracker.md` first (`/pickup` does this).
+- **Before non-trivial work**, write a plan and get my approval. Non-trivial means more than one file, a new dependency, or anything touching the API, the data model or the architecture.
+- **Log every decision that had real alternatives** in `docs/decisions.md`.
+- **Log every lesson** in `docs/learnings.md` when it happens: bugs and their root causes, dead ends, surprises. Never let them live only in the handoff.
+- **Use subagents** for web research and broad code searches, so the main context stays small.
+- **Run `/handoff`** at the end of each task and before the context fills up.
+- **IDs come from the script**, never from counting by hand: `bash <kit>/new-project/scripts/next-id.sh D|T|L`.
+- **Commit messages start with the task ID:** `T-012: Add the login form`. Mention decision IDs in the body when a commit implements one.
+
+## Documentation formats
+
+- **Every doc is Markdown.** Markdown is the source of truth.
+- **HTML only on request.** Quick pages come from the md-to-html script (no writing by Claude); rich interactive pages are written by Claude only when I ask for them. All generated HTML lives in `docs/visual/`, is never edited by hand, and is regenerated when its Markdown changes.
+- Detailed docs (features, flows, architecture, concepts) follow the **deep-doc** skill; summaries for the team head follow **status-brief**; research follows **research-report**.
+- Every new project term goes in `docs/glossary.md`.
+
+{{learning}}## Working style: learning
+{{learning}}
+{{learning}}- Before each step, say **why** we're doing it and which concept it relies on. Introduce a concept before using it; if it's new to me, write or update its doc in `docs/concepts/`.
+{{learning}}- Prefer the simplest approach that teaches the idea, and name the production-grade alternative in one line.
+{{learning}}- When I could reasonably attempt something myself, give me a hint first and the full solution only if I ask.
+{{learning}}- At the end of each plan, ask me to explain the key idea back, or to predict what a change will do, before confirming it's done. Correct misunderstandings directly.
+{{learning}}- Every bug, dead end and surprise goes in `docs/learnings.md`, with the general rule it teaches.
+{{production}}## Working style: production
+{{production}}
+{{production}}- Production-grade choices by default: maintained, widely used dependencies, pinned versions. Keep explanations short.
+{{production}}- Every change in behaviour comes with tests, and the tests run before anything is called done.
+{{production}}- Run `/security-review` before merging anything that touches authentication, input handling, secrets or data access.
+{{production}}- Keep `docs/runbook.md` current: settings, deploy, rollback, troubleshooting.
+{{production}}- Record notable bugs and incidents in `docs/learnings.md`.
+
+## Definition of done
+
+A task is done only when all of these are true (`/done` checks them):
+
+- It works and the tests pass.
+- `docs/tracker.md` is updated.
+- Docs are updated if behaviour, architecture, a flow or the API changed.
+- Decisions are logged in `docs/decisions.md`, lessons in `docs/learnings.md`.
+- The plan has its Outcome written and is moved to `session/plans/done/`.
+- Code is committed in its repository.
+
+## Compaction
+
+When compacting, preserve: the current goal, the files changed, the decisions made, the approaches that failed and why, and the exact next step.
+
+## Rules
+
+- Never edit, move or delete files in `inputs/`. The one exception is the table in `inputs/README.md`, which Claude keeps up to date.
+- Never open real env files (`.env`, `.env.local`, `.env.development`, `.env.production`, `.env.staging`, `.env.test`): not with Read, and not through Bash (`cat`, `grep`, `source`, …). `.env.example` is fine.
+- `<kit>` in this file means the folder that holds the kit's skills (usually `~/.claude/skills`).

@@ -1,0 +1,31 @@
+# Real env files (.env.example stays tracked)
+.env
+.env.*
+!.env.example
+
+# Personal Claude files
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+target/
+*.tsbuildinfo
+
+# Page fragments left behind by an interrupted page build
+*.body.html
+{{team}}
+{{team}}# Team mode: the handoff is personal working state
+{{team}}session/HANDOFF.md
+{{separate}}
+{{separate}}# Separate mode: backend and frontend are their own repositories
+{{separate}}code/backend/
+{{separate}}code/frontend/

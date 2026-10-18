@@ -1,0 +1,67 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scripts:
+    name: scripts (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Linux, bash 5
+            os: ubuntu-latest
+            bash: bash
+          - name: macOS, bash 3.2
+            os: macos-latest
+            bash: /bin/bash
+          - name: Windows, Git Bash
+            os: windows-latest
+            bash: bash
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bash version
+        run: ${{ matrix.bash }} --version | head -n 1
+      - name: Line endings are LF
+        run: |
+          if grep -rlI $'\r' skills install.sh tests; then echo "CRLF found"; exit 1; fi
+      - name: ShellCheck
+        if: runner.os == 'Linux'
+        run: shellcheck -s bash skills/*/scripts/*.sh install.sh tests/*.sh
+      - name: Script tests
+        env:
+          TEST_BASH: ${{ matrix.bash }}
+        run: ${{ matrix.bash }} tests/run-tests.sh
+
+  pages:
+    name: pages render in Chromium (live CDN)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Build sample pages
+        run: echo "VISUAL=$(bash tests/build-fixtures.sh "$RUNNER_TEMP/fx")" >> "$GITHUB_ENV"
+      - name: Render test
+        run: node tests/render-test.mjs "$VISUAL"
+      - name: Keep screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: ${{ env.VISUAL }}/shot-*.png
+          if-no-files-found: ignore
