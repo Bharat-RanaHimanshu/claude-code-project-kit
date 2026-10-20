@@ -2,6 +2,14 @@
 
 All notable changes to this kit. The version lives in `skills/new-project/VERSION` and is stamped into every project's `CLAUDE.md`.
 
+## 2.1.1 (2026-10-20)
+
+### Fixed
+- `install.sh` with `--target <project>/.claude/skills`: the backup folder `.claude/kit-backups/` now ignores itself, so updating the kit inside a project never commits the old copies.
+
+### Added
+- README: a **Claude Code on the web** section (skills in the project repository or the claude.ai account, your git identity on commits, and the "Unverified" label).
+
 ## 2.1.0 (2026-10-18)
 
 A testing strategy in every project, so a change can't silently break older behaviour.

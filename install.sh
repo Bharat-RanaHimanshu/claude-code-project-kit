@@ -33,6 +33,9 @@ echo "claude-code-project-kit v${VERSION:-?} -> $TARGET"
 backup() {  # move an installed skill folder into the backup folder
   [ "$DRY" = yes ] && return 0
   mkdir -p "$BACKUP" || die "could not create $BACKUP"
+  # Backups land inside the repository when the target is a project's .claude/skills:
+  # the folder ignores itself, so they are never committed.
+  [ -f "${BACKUP%/*}/.gitignore" ] || printf '*\n' > "${BACKUP%/*}/.gitignore" || die "could not write ${BACKUP%/*}/.gitignore"
   mv "$1" "$BACKUP/" || die "could not back up $1"
 }
 

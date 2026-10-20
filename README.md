@@ -1,7 +1,7 @@
 # claude-code-project-kit
 
 [![tests](https://github.com/Bharat-RanaHimanshu/claude-code-project-kit/actions/workflows/test.yml/badge.svg)](https://github.com/Bharat-RanaHimanshu/claude-code-project-kit/actions/workflows/test.yml)
-![version](https://img.shields.io/badge/version-2.1.0-2a78d6)
+![version](https://img.shields.io/badge/version-2.1.1-2a78d6)
 ![bash 3.2+](https://img.shields.io/badge/bash-3.2%2B-52514e)
 [![license: MIT](https://img.shields.io/badge/license-MIT-0ca30c)](LICENSE)
 
@@ -87,7 +87,29 @@ This copies the skills into `~/.claude/skills`, so they work in every project on
 
 **Update:** `git pull && bash install.sh`. Skills that changed are replaced and the old copies are kept in `~/.claude/kit-backups/`.
 
-**Claude Code on the web:** cloud sessions don't see the skills on your computer. Either add the skill folders to your claude.ai account's skills (upload all of them: they use each other's scripts), or copy `skills/` into a project repository's `.claude/skills/` folder.
+### Claude Code on the web
+
+Cloud sessions start in a fresh container and don't see the skills on your computer. Give them the kit in one of two ways:
+
+- **In the project repository:** install the skills into the project and commit them, so every session of that project has them. Update the same way.
+
+  ```bash
+  bash install.sh --target /path/to/project/.claude/skills
+  ```
+
+  Old copies go to the project's `.claude/kit-backups/`, which ignores itself, so they are never committed.
+- **In your claude.ai account:** add the skill folders to your account's skills. Upload all of them: they use each other's scripts.
+
+**Your name on the commits.** A cloud session commits with the container's git identity unless you set your own. In the environment's settings (the environment menu in the session's title bar, then Edit), add `GIT_AUTHOR_NAME`, `GIT_AUTHOR_EMAIL`, `GIT_COMMITTER_NAME` and `GIT_COMMITTER_EMAIL`; new sessions pick them up. Don't add `GIT_CONFIG_*` variables there: the environment may already use them for its own git setup.
+
+**"Unverified" on GitHub.** The container may sign commits with a key your GitHub account doesn't know, so GitHub labels them Unverified. Turn signing off for the project with a startup hook in its `.claude/settings.json`, next to the kit's `compact` hook:
+
+```json
+{
+  "matcher": "startup",
+  "hooks": [{ "type": "command", "command": "git -C \"$CLAUDE_PROJECT_DIR\" config commit.gpgsign false" }]
+}
+```
 
 ## Your first project
 

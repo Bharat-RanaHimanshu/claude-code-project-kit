@@ -190,6 +190,12 @@ mkdir -p "$I/brief"; printf -- '---\nname: brief\n---\nWrites into docs/briefs\n
 "$B" "$KIT/install.sh" --target "$I" > "$T/i3.txt"
 check "a changed skill is updated and the old copy backed up" 'grep -q "updated    pickup" "$T/i3.txt" && ! grep -q "local edit" "$I/pickup/SKILL.md" && grep -rq "local edit" "$T/home/.claude/kit-backups"'
 check "the v1 brief skill is retired" '[ ! -e "$I/brief" ] && grep -q "retired    brief" "$T/i3.txt"'
+R="$T/repo"; mkdir -p "$R"; git -C "$R" init -q
+"$B" "$KIT/install.sh" --target "$R/.claude/skills" > /dev/null
+git -C "$R" add -A; git -C "$R" commit -qm skills
+printf 'local edit\n' >> "$R/.claude/skills/pickup/SKILL.md"
+"$B" "$KIT/install.sh" --target "$R/.claude/skills" > "$T/i4.txt"
+check "backups inside a repository are git-ignored" 'grep -q "updated    pickup" "$T/i4.txt" && [ -d "$R/.claude/kit-backups" ] && [ -z "$(git -C "$R" status --porcelain)" ]'
 
 printf '\nRESULT: %s passed, %s failed\n' "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]
